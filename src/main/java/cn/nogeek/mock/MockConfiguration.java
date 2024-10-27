@@ -79,7 +79,12 @@ public class MockConfiguration {
             for (String mockClassMethodName : ALL_MOCK_CLASS_METHOD_NAME) {
                 String[] split = mockClassMethodName.split("#");
                 String className = split[0];
-                String methodName = split[1].replace(".json", "");
+                Set<String> methodNameSet = ALL_MOCK_CLASS_METHOD_NAME.stream()
+                        .filter(fileName -> fileName.startsWith(className))
+                        .map(fileName -> fileName.replace(className + "#", "")
+                                .replace(".json", "")
+                        )
+                        .collect(Collectors.toSet());
 
                 // Mock 住了这个 Bean
                 if (bean.getClass().getName().equals(className)) {
@@ -91,9 +96,9 @@ public class MockConfiguration {
                     enhancer.setCallback(new MethodInterceptor() {
                         @Override
                         public Object intercept(Object obj, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
-                            if (method.getName().equals(methodName)) {
+                            if (methodNameSet.contains(method.getName())) {
                                 // 代理方法
-                                String resultJson = classPathReadUtil.readMockConfig(mockClassMethodName);
+                                String resultJson = classPathReadUtil.readMockConfig(className + "#" + method.getName() + ".json");
                                 LOGGER.info("[resultJson][{}]", resultJson);
 
                                 Class<?> resultType = ResolvableType.forMethodReturnType(method).resolve();
