@@ -94,45 +94,47 @@ public class MockConfiguration {
                     enhancer.setSuperclass(bean.getClass());
                     enhancer.setUseCache(false);
                     enhancer.setCallback(new MethodInterceptor() {
-                        @Override
-                        public Object intercept(Object obj, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
-                            if (methodNameSet.contains(method.getName())) {
-                                // 代理方法
-                                String resultJson = classPathReadUtil.readMockConfig(className + "#" + method.getName() + ".json");
-                                LOGGER.info("[resultJson][{}]", resultJson);
 
-                                Class<?> resultType = ResolvableType.forMethodReturnType(method).resolve();
-                                Object result;
-                                if (List.class.equals(resultType)) {
-                                    Class<?> listItemClass = ResolvableType.forMethodReturnType(method).getGeneric(0).getRawClass();
-                                    ObjectMapper objectMapper = new ObjectMapper();
-                                    TypeFactory typeFactory = objectMapper.getTypeFactory();
-                                    CollectionType collectionType = typeFactory.constructCollectionType(List.class, listItemClass);
-                                    result = objectMapper.readValue(resultJson, collectionType);
-                                } else if (Map.class.equals(resultType)) {
-                                    Class<?> mapKeyClass = ResolvableType.forMethodReturnType(method).getGeneric(0).getRawClass();
-                                    Class<?> mapValueClass = ResolvableType.forMethodReturnType(method).getGeneric(1).getRawClass();
-                                    ObjectMapper objectMapper = new ObjectMapper();
-                                    TypeFactory typeFactory = objectMapper.getTypeFactory();
-                                    MapType mapType = typeFactory.constructMapType(Map.class, mapKeyClass, mapValueClass);
-                                    result = objectMapper.readValue(resultJson, mapType);
-                                } else if (Set.class.equals(resultType)) {
-                                    Class<?> setItemClass = ResolvableType.forMethodReturnType(method).getGeneric(0).getRawClass();
-                                    ObjectMapper objectMapper = new ObjectMapper();
-                                    TypeFactory typeFactory = objectMapper.getTypeFactory();
-                                    CollectionType collectionType = typeFactory.constructCollectionType(Set.class, setItemClass);
-                                    result = objectMapper.readValue(resultJson, collectionType);
-                                } else {
-                                    ObjectMapper objectMapper = new ObjectMapper();
-                                    result = objectMapper.readValue(resultJson, resultType);
-                                }
+                                             @Override
+                                             public Object intercept(Object obj, Method method, Object[] params, MethodProxy methodProxy) throws Throwable {
+                                                 // 代理方法
+                                                 String resultJson = classPathReadUtil.readMockConfig(className + "#" + method.getName() + ".json");
+                                                 LOGGER.info("[resultJson][{}]", resultJson);
 
-                                return result;
-                            } else {
-                                return methodProxy.invokeSuper(obj, params);
-                            }
-                        }
-                    });
+                                                 if (resultJson != null && resultJson != "") {
+                                                     Class<?> resultType = ResolvableType.forMethodReturnType(method).resolve();
+                                                     Object result;
+                                                     if (List.class.equals(resultType)) {
+                                                         Class<?> listItemClass = ResolvableType.forMethodReturnType(method).getGeneric(0).getRawClass();
+                                                         ObjectMapper objectMapper = new ObjectMapper();
+                                                         TypeFactory typeFactory = objectMapper.getTypeFactory();
+                                                         CollectionType collectionType = typeFactory.constructCollectionType(List.class, listItemClass);
+                                                         result = objectMapper.readValue(resultJson, collectionType);
+                                                     } else if (Map.class.equals(resultType)) {
+                                                         Class<?> mapKeyClass = ResolvableType.forMethodReturnType(method).getGeneric(0).getRawClass();
+                                                         Class<?> mapValueClass = ResolvableType.forMethodReturnType(method).getGeneric(1).getRawClass();
+                                                         ObjectMapper objectMapper = new ObjectMapper();
+                                                         TypeFactory typeFactory = objectMapper.getTypeFactory();
+                                                         MapType mapType = typeFactory.constructMapType(Map.class, mapKeyClass, mapValueClass);
+                                                         result = objectMapper.readValue(resultJson, mapType);
+                                                     } else if (Set.class.equals(resultType)) {
+                                                         Class<?> setItemClass = ResolvableType.forMethodReturnType(method).getGeneric(0).getRawClass();
+                                                         ObjectMapper objectMapper = new ObjectMapper();
+                                                         TypeFactory typeFactory = objectMapper.getTypeFactory();
+                                                         CollectionType collectionType = typeFactory.constructCollectionType(Set.class, setItemClass);
+                                                         result = objectMapper.readValue(resultJson, collectionType);
+                                                     } else {
+                                                         ObjectMapper objectMapper = new ObjectMapper();
+                                                         result = objectMapper.readValue(resultJson, resultType);
+                                                     }
+
+                                                     return result;
+                                                 } else {
+                                                     return methodProxy.invokeSuper(obj, params);
+                                                 }
+                                             }
+                                         }
+                    );
 
                     Constructor<?> constructor = bean.getClass().getConstructors()[0];
                     Class<?>[] parameterTypes = constructor.getParameterTypes();
