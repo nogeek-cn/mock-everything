@@ -28,8 +28,8 @@ public class AController {
      * @return str
      */
     @GetMapping("/say")
-    public String sayHello() {
-        return aService.sayHello();
+    public String say() {
+        return aService.say();
     }
 
     @GetMapping("/sayList")

@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class AService {
 
-    public String sayHello() {
+    public String say() {
         return "noGeek.cn";
     }
 
