@@ -1,8 +1,6 @@
 package cn.nogeek.controller;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +13,7 @@ import javax.annotation.Resource;
  * @date 2024/10/21  下午10:40
  */
 @RestController
-public class AController implements ApplicationContextAware {
+public class AController {
 
     @Resource
     private AService aService;
@@ -27,9 +25,4 @@ public class AController implements ApplicationContextAware {
     }
 
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        String result = applicationContext.getBean(AController.class).sayHello();
-        System.out.println("AController.sayHello: " + result);
-    }
 }
