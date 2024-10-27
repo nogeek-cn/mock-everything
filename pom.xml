@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.darian</groupId>
-    <artifactId>2024-10-21-spring-every-mock</artifactId>
+    <artifactId>mock-everything</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>2024-10-21-spring-every-mock</name>
-    <description>Customer Darian Demo:2024-10-21-spring-every-mock</description>
+    <name>mock-everything</name>
+    <description>Customer Darian Demo:mock-everything</description>
 
     <properties>
         <java.version>11</java.version>
